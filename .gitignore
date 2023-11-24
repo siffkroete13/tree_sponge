@@ -1,0 +1,58 @@
+# Python-spezifische Ignorierungen
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+pip-log.txt
+pip-delete-this-directory.txt
+*.pyc
+
+# C++-spezifische Ignorierungen
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.out
+*.app
+Debug/
+Release/
+*.log
+*.tlog
+*.pdb
+*.ilk
+*.exp
+*.sdf
+*.opendb
+*.opensdf
+*.user
+*.userosscache
+*.ipch
+
+# Visual Studio Code-spezifische Ignorierungen
+.vscode/
+
+# Allgemeine Editor-Backups und Dateien
+*~
+*.swp
+*.tmp
+*.bak
+*.backup
+.DS_Store
+Thumbs.db
+
+# Betriebssystem-spezifische Dateien
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Build-Ausgaben
+bin/
+obj/
+build/
+!*/src/main/resources/
+!*/src/main/resources/*
