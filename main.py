@@ -1,5 +1,5 @@
 import pygame
-from game_controller import Gamecontroller
+from controller.game_controller import Gamecontroller
 from engineInterface import EngineInterface
 
 # Initialisierung von Pygame

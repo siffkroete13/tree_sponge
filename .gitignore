@@ -56,3 +56,5 @@ obj/
 build/
 !*/src/main/resources/
 !*/src/main/resources/*
+
+tree_sponge_env/
