@@ -1,7 +1,7 @@
 import pygame
 
 
-class Board:
+class ViewBoard:
     
     def __init__(self):
         self.load_images()

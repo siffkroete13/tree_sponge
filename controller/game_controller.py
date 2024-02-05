@@ -1,34 +1,29 @@
+import json
 import pygame
-from events import EvType, EvMsg
-from view import View
-from board import Board
-import pygame_menu as pm
+from controller.events import EvType, EvMsg
+from view.view import View
+from model.app_state import AppState
 
 
 class Gamecontroller:
-    def __init__(self, num_engines, engine_interfaces):
-        self.num_engines = num_engines
-        self.engine_interfaces = engine_interfaces
-
+    def __init__(self, config_data):
+        
+        self.config_data = config_data
+       
+        self.app_state = AppState(self.config_data)
+        
+        self.view = View(self.config_data)
+    
+    
+    def init_chess_engines(self):
+        self.num_engines = self.config_data.num_engines
+        self.engine_interfaces = self.engine_interfaces
+        
         # Bei allen Schach-Engines Observer registrieren
         for i in range(0, self.num_engines):
             self.engine_interfaces[i].register_observer(self)
+   
         
-        self.board = Board()
-        
-        menu = pm.Menu(title="Main Menu", width = 200, height = 50, theme=pm.themes.THEME_GREEN) 
-
-        # Adding label, selector, button to menu
-        menu.add.label(title="Main") 
-        menu.add.selector('Set Opponents:', [('Engine-Human', EvMsg.ENGINE_HUMAN),
-                                            ('Human-Engine', EvMsg.HUMAN_ENGINE),
-                                            ('Engine-Engine', EvMsg.ENGINE_ENGINE)], 
-                                            onchange=self.set_opponent)
-        menu.add.button('Start Match', self.start_match)
-        menu.add.button('Quit', pm.events.EXIT)
-        
-        self.view = View(menu)
-    
     def set_opponent(self, ev_type, ev_message):
         self.trigger_event(ev_type, ev_message) 
         
