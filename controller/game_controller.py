@@ -6,13 +6,14 @@ from model.app_state import AppState
 
 
 class Gamecontroller:
-    def __init__(self, config_data):
+    def __init__(self, num_engines, config_data):
+        self.num_engines = num_engines
         
         self.config_data = config_data
        
         self.app_state = AppState(self.config_data)
         
-        self.view = View(self.config_data)
+        self.view = View(self.config_data['view'], self.trigger_event)
     
     
     def init_chess_engines(self):
@@ -77,7 +78,7 @@ class Gamecontroller:
             for event in pygame.event.get():
                 running = self.update(event)
             
-            self.view.update(self.board)
+            self.view.update(self.app_state, self.board)
             
     def close(self): 
         for i in range(0, self.num_engines):

@@ -1,4 +1,19 @@
 {
-    "num_threads": 4,
-    "trans_table_size": 10000
+    "engine_config": {
+        "num_threads": 4,
+        "trans_table_size": 10000
+    },
+
+    "view": {
+        "window_width": 800,
+        "window_height": 800,
+        "path_to_pieces": "resources/imgs/pieces",
+        "path_to_board": "resources/imgs/board.png"
+    },
+
+    "game_settings": {
+
+    }
+    
+
 }

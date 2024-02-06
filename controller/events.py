@@ -8,6 +8,7 @@ class EvType(Enum):
 
   
 class EvMsg(Enum):
+    # Menu Events
     ENGINE_HUMAN = 1
     HUMAN_ENGINE = 2
     ENGINE_ENGINE = 3
