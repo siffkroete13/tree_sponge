@@ -1,70 +1,65 @@
-import pygame
-import pygame_menu as pm
-from controller.events import EvType, EvMsg
+import tkinter as tk
+from tkinter import Menu, messagebox
+from PIL import Image, ImageTk
 
 class View:
     def __init__(self, config_data, event_callback):
+        self.root = tk.Tk()
         self.config_data = config_data
         self.event_callback = event_callback
         
-        # Fenstergröße und -einstellungen
-        self.screen = pygame.display.set_mode((800, 600))  # Setzt die Größe des Fensters
-        pygame.display.set_caption("Schachspiel")
-        
-        self.init_menu()  # Initialisieren Sie das Menü vor der mainloop
+        self.root.geometry("800x600")
+        self.root.title("Schachspiel")
+
+        self.init_menu()
         self.load_images()
-        
-        self.menu.mainloop(self.screen)  # Starten Sie die mainloop nach der Initialisierung des Menüs
-        
+
+        self.canvas = tk.Canvas(self.root, width=800, height=500)
+        self.canvas.pack()
+
+        self.root.mainloop()
     
     def init_menu(self):
-        self.menu = pm.Menu(title="Main Menu", width=800, height=100, theme=pm.themes.THEME_GREEN)
-       
-        # Adding label, selector, button to menu
-        self.menu.add.label(title="Main")
-        self.menu.add.selector('Set Opponents:', [('Engine-Human', EvMsg.ENGINE_HUMAN),
-                                            ('Human-Engine', EvMsg.HUMAN_ENGINE),
-                                            ('Engine-Engine', EvMsg.ENGINE_ENGINE)], 
-                                            onchange=self.set_opponent)
-        self.menu.add.button('Start Match', self.start_match)
-        self.menu.add.button('Quit', pm.events.EXIT)
-       
-        
-    def set_opponent(self, value, opponent):
-        # Hier den Befehl extrahieren, ist es ENGINE_HUMAN oder ENGINE_ENGINE? Oder sonst ein Menü Punkt?
-        self.event_callback(EvType.MENU_EV, EvMsg.ENGINE_HUMAN)
-        
-    def start_match(self, value1, value2):
-        self.event_callback(EvType.MENU_EV, EvMsg.START_MATCH)
+        menubar = Menu(self.root)
+        self.root.config(menu=menubar)
+
+        game_menu = Menu(menubar, tearoff=0)
+        game_menu.add_command(label="Start Match", command=self.start_match)
+        game_menu.add_command(label="Quit", command=self.quit)
+        menubar.add_cascade(label="Game", menu=game_menu)
+
+        self.set_opponent_menu = Menu(menubar, tearoff=0)
+        self.set_opponent_menu.add_command(label="Engine-Human", command=lambda: self.set_opponent('Engine-Human'))
+        self.set_opponent_menu.add_command(label="Human-Engine", command=lambda: self.set_opponent('Human-Engine'))
+        self.set_opponent_menu.add_command(label="Engine-Engine", command=lambda: self.set_opponent('Engine-Engine'))
+        menubar.add_cascade(label="Set Opponents", menu=self.set_opponent_menu)
     
-    def update(self, app_state, board):
-        self.app_state = app_state
-        self.board_data = board
-        self.draw_board(board)
-        self.draw_pieces(board)
-        pygame.display.flip()
-  
-  
-    # Laden der Bilder für Schachfiguren
+    def set_opponent(self, opponent):
+        self.event_callback('MENU_EV', opponent)
+    
+    def start_match(self):
+        self.event_callback('MENU_EV', 'START_MATCH')
+    
+    def quit(self):
+        self.root.quit()
+    
     def load_images(self):
-        self.pieces = ['b_pawn', 'w_pawn', 'b_knight', 'w_knight', 'b_bishop', 'w_bishop', 'b_rook', 'w_rook', 'b_queen', 'w_queen', 'b_king', 'w_king']
         self.images = {}
-        for piece in self.pieces:
-            self.images[piece] = pygame.image.load(f'{self.config_data['path_to_pieces']}/{piece}.png')
-
-    # Zeichnen des Schachbretts
+        for piece in ['b_pawn', 'w_pawn', 'b_knight', 'w_knight', 'b_bishop', 'w_bishop', 'b_rook', 'w_rook', 'b_queen', 'w_queen', 'b_king', 'w_king']:
+            path = f"{self.config_data['path_to_pieces']}/{piece}.png"
+            image = Image.open(path)
+            self.images[piece] = ImageTk.PhotoImage(image)
+    
     def draw_board(self, board):
-        board_img = pygame.image.load(self.config_data['path_to_board'])
-        self.screen.blit(board_img, (0, 0))
-
-    # Zeichnen der Schachfiguren
+        board_img = Image.open(self.config_data['path_to_board'])
+        self.canvas.create_image(0, 0, anchor='nw', image=ImageTk.PhotoImage(board_img))
+    
     def draw_pieces(self, board):
-        square_size = 800 // 8  # Größe eines Schachfeldes (angenommen, das Fenster ist 800x800)
+        square_size = 800 // 8
         for i in range(64):
             piece = board.piece_at(i)
             if piece:
                 x = (i % 8) * square_size
                 y = (i // 8) * square_size
                 piece_name = f'{piece.color}_{piece.symbol().lower()}'
-                self.screen.blit(self.images[piece_name], (x, y))
-
+                self.canvas.create_image(x, y, image=self.images[piece_name], anchor='nw')
