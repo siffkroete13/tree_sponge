@@ -1,5 +1,10 @@
 {
     "engine_config": {
+        "max_engines": 2,
+        "engine_path": [
+            "engine/main.py",
+            "engine/main.py"
+        ],
         "num_threads": 4,
         "trans_table_size": 10000
     },

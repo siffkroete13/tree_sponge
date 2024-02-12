@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import Menu, messagebox
 from PIL import Image, ImageTk
+from controller.events import EvType, EvMsg, Ev, create_event
 
 class View:
     def __init__(self, config_data, event_callback):
@@ -14,8 +15,17 @@ class View:
         self.init_menu()
         self.load_images()
 
-        self.canvas = tk.Canvas(self.root, width=800, height=500)
+        self.canvas = tk.Canvas(self.root, width=800, height=800)
         self.canvas.pack()
+        
+        # Bind Mausklick-Ereignis
+        self.canvas.bind("<Button-1>", self.on_mouse_click)
+        
+        # Bind Mausbewegungs-Ereignis
+        self.canvas.bind("<Motion>", self.on_mouse_move)
+        
+        # Bind Maus Loslassen-Ereignis
+        self.canvas.bind("<ButtonRelease-1>", self.on_mouse_release)
 
         self.root.mainloop()
     
@@ -23,25 +33,40 @@ class View:
         menubar = Menu(self.root)
         self.root.config(menu=menubar)
 
+        # Menü Start/Quit
         game_menu = Menu(menubar, tearoff=0)
         game_menu.add_command(label="Start Match", command=self.start_match)
         game_menu.add_command(label="Quit", command=self.quit)
         menubar.add_cascade(label="Game", menu=game_menu)
 
-        self.set_opponent_menu = Menu(menubar, tearoff=0)
-        self.set_opponent_menu.add_command(label="Engine-Human", command=lambda: self.set_opponent('Engine-Human'))
-        self.set_opponent_menu.add_command(label="Human-Engine", command=lambda: self.set_opponent('Human-Engine'))
-        self.set_opponent_menu.add_command(label="Engine-Engine", command=lambda: self.set_opponent('Engine-Engine'))
-        menubar.add_cascade(label="Set Opponents", menu=self.set_opponent_menu)
+         # Menü Opponent
+        set_opponent_menu = Menu(menubar, tearoff=0)
+        set_opponent_menu.add_command(label="Engine-Human", command=lambda: self.set_opponent('Engine-Human'))
+        set_opponent_menu.add_command(label="Human-Engine", command=lambda: self.set_opponent('Human-Engine'))
+        set_opponent_menu.add_command(label="Engine-Engine", command=lambda: self.set_opponent('Engine-Engine'))
+        menubar.add_cascade(label="Set Opponents", menu=set_opponent_menu)
     
     def set_opponent(self, opponent):
-        self.event_callback('MENU_EV', opponent)
+        self.event_callback(create_event(EvType.MENU_EV, EvMsg.SET_OPPONENT, opponent))
     
     def start_match(self):
         self.event_callback('MENU_EV', 'START_MATCH')
+        
+    def on_mouse_click(self, event):
+        # Event-Handler für Mausklick
+        self.event_callback(create_event(EvType.MOUSE_EV, EvMsg.MOUSEBUTTONDOWN, {'x': event.x, 'y': event.y}))
+
+    def on_mouse_move(self, event):
+        # Event-Handler für Mausbewegung
+        self.event_callback(create_event(EvType.MOUSE_EV, EvMsg.MOUSEMOTION, {'x': event.x, 'y': event.y}))
+
+    def on_mouse_release(self, event):
+        # Event-Handler für Maus Loslassen
+        self.event_callback(create_event(EvType.MOUSE_EV, EvMsg.MOUSEBUTTONUP, {'x': event.x, 'y': event.y}))
     
     def quit(self):
         self.root.quit()
+        self.event_callback(create_event(EvType.MENU_EV, EvMsg.QUIT, {}))
     
     def load_images(self):
         self.images = {}
