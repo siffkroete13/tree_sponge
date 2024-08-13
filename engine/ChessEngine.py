@@ -1,15 +1,15 @@
-class Board:
+from engine import Search
+
+
+class ChessEngine:
     def __init__(self):
-       pass
-   
-    def set_position(self, fen):
-        self.pos = [None] * 144
-        self.info = None
+        self.board = [None] * 144
+        self.board_info = None
         
-        self.pos, self.info = self.fen_to_array_with_info(fen)
-        
-    def mode(self, from_pos, to_pos):
-        pass
+        self.search_engine = Search()
+    
+    def set_board(self, fen):
+        self.board, self.board_info = self.fen_to_array_with_info(fen)
         
     @staticmethod
     def fen_to_array_with_info(fen):
@@ -50,3 +50,6 @@ class Board:
         }
 
         return board, board_info
+    
+    def go(self, board):
+        best_move = self.search_engine.go()

@@ -11,6 +11,7 @@ BoardDim = namedtuple('BoardDim', ['x', 'y', 'width', 'height', 'square_width', 
 class View:
     def __init__(self, config_data, event_callback):
         self.board = []
+        self.board_info = {}
         
         self.board_dim = None
         self.img_size = {}
@@ -54,7 +55,7 @@ class View:
         game_menu.add_command(label="Quit", command=self.quit)
         menubar.add_cascade(label="Game", menu=game_menu)
 
-         # Menü Opponent
+        # Menü Opponent
         set_opponent_menu = Menu(menubar, tearoff=0)
         set_opponent_menu.add_command(label="Engine-Human", command=lambda: self.set_opponent('Engine-Human'))
         set_opponent_menu.add_command(label="Human-Engine", command=lambda: self.set_opponent('Human-Engine'))
@@ -191,6 +192,7 @@ class View:
             x = i * 20
             self.canvas.create_line(x, ruler_y_position, x, ruler_y_position + 4, fill="black")
             self.canvas.create_text(x, ruler_y_position + 20, text=str(x), anchor='n')
+
 
             
             

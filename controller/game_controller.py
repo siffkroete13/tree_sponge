@@ -12,6 +12,8 @@ class Gamecontroller:
         self.config_data = config_data
         self.app_state = AppState(self.config_data)
         self.view = View(self.config_data['view'], self.update)
+        
+        self.opponent = {'white': None, 'black': None}
     
     def init_chess_engines(self):
         self.num_engines = self.config_data.num_engines
