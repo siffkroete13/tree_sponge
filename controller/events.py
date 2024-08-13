@@ -19,7 +19,7 @@ class EvMsg(Enum):
 
 
 class Ev:
-    def __init__(self, ev_type, ev_msg, ev_payload):
+    def __init__(self, ev_type, ev_msg, ev_payload = ''):
         self.type = ev_type
         self.msg = ev_msg
         self.payload = ev_payload

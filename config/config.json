@@ -10,6 +10,7 @@
     },
 
     "view": {
+        "title": "Schach",
         "window_width": 800,
         "window_height": 800,
         "path_to_pieces": "resources/imgs/pieces",

@@ -1,0 +1,17 @@
+import networkx as nx
+import matplotlib.pyplot as plt
+
+def visualize_tree(tree):
+    pos = nx.spring_layout(tree)
+    labels = nx.get_node_attributes(tree, 'label')
+    nx.draw(tree, pos, labels=labels, with_labels=True, node_size=5000, node_color="lightblue", font_size=10)
+    plt.show()
+
+# Beispiel-Nutzung
+G = nx.DiGraph()
+G.add_node(1, label="root")
+G.add_node(2, label="move1")
+G.add_node(3, label="move2")
+G.add_edge(1, 2)
+G.add_edge(1, 3)
+visualize_tree(G)
