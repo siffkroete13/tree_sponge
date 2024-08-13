@@ -69,15 +69,56 @@ class View:
         
     def on_mouse_click(self, event):
         # Event-Handler für Mausklick
-        self.event_callback(create_event(EvType.MOUSE_EV, EvMsg.MOUSEBUTTONDOWN, {'x': event.x, 'y': event.y}))
+        # self.event_callback(create_event(EvType.MOUSE_EV, EvMsg.MOUSEBUTTONDOWN, {'x': event.x, 'y': event.y}))
+        
+        # Überprüfe, ob eine Figur an der angeklickten Position ist
+        for i in range(len(self.board)):
+            piece = self.board[i]
+            if piece:
+                x = self.board_dim.padding_left + (i % 8) * self.board_dim.square_width
+                y = self.board_dim.padding_top + (i // 8) * self.board_dim.square_height
+
+                if x <= event.x <= x + self.board_dim.square_width and y <= event.y <= y + self.board_dim.square_height:
+                    self.selected_piece = piece
+                    self.selected_piece_image = self.images[piece]
+                    self.selected_piece_x = x
+                    self.selected_piece_y = y
+                    self.piece_offset_x = event.x - x
+                    self.piece_offset_y = event.y - y
+                    self.canvas.delete("piece_" + str(i))  # Entferne das alte Bild der Figur
+                    self.board[i] = None  # Entferne die Figur aus dem Brett-Array
+                    break
 
     def on_mouse_move(self, event):
         # Event-Handler für Mausbewegung
-        self.event_callback(create_event(EvType.MOUSE_EV, EvMsg.MOUSEMOTION, {'x': event.x, 'y': event.y}))
+        # self.event_callback(create_event(EvType.MOUSE_EV, EvMsg.MOUSEMOTION, {'x': event.x, 'y': event.y}))
+        if self.selected_piece:
+            # Bewege die ausgewählte Figur mit der Maus
+            self.canvas.delete("moving_piece")  # Lösche das vorherige "bewegte" Bild
+            self.canvas.create_image(event.x - self.piece_offset_x, event.y - self.piece_offset_y, image=self.selected_piece_image, anchor='nw', tags="moving_piece")
 
     def on_mouse_release(self, event):
         # Event-Handler für Maus Loslassen
-        self.event_callback(create_event(EvType.MOUSE_EV, EvMsg.MOUSEBUTTONUP, {'x': event.x, 'y': event.y}))
+        # self.event_callback(create_event(EvType.MOUSE_EV, EvMsg.MOUSEBUTTONUP, {'x': event.x, 'y': event.y}))
+        
+        if self.selected_piece:
+            # Berechne das Zielquadrat
+            target_col = (event.x - self.board_dim.padding_left) // self.board_dim.square_width
+            target_row = (event.y - self.board_dim.padding_top) // self.board_dim.square_height
+
+            # Setze die Figur an die neue Position (auf das Zielquadrat)
+            if 0 <= target_col < 8 and 0 <= target_row < 8:
+                new_x = self.board_dim.padding_left + target_col * self.board_dim.square_width
+                new_y = self.board_dim.padding_top + target_row * self.board_dim.square_height
+
+                self.canvas.create_image(new_x, new_y, image=self.selected_piece_image, anchor='nw', tags="piece_" + str(target_row * 8 + target_col))
+
+            # Lösche die bewegte Figur
+            self.canvas.delete("moving_piece")
+
+            # Setze die Auswahl zurück
+            self.selected_piece = None
+            self.selected_piece_image = None
     
     def quit(self):
         self.root.quit()
@@ -139,7 +180,7 @@ class View:
             
                 x = self.board_dim.x + self.board_dim.padding_left + ( (i % 8) * self.board_dim.square_width + (self.board_dim.square_width / 2) )
                 y = self.board_dim.y + self.board_dim.padding_top + ( (i // 8) * self.board_dim.square_height + (self.board_dim.square_height / 2) )
-                self.canvas.create_image(x, y, image=self.images[piece], anchor='center')
+                self.canvas.create_image(x, y, image=self.images[piece], anchor='center', tags="piece_" + str(i))
                 
     def draw_ruler(self):
         square_size = self.board_dim.square_width
