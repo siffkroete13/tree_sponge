@@ -27,6 +27,7 @@ class ChessEngine:
         
         piece_names = piece_names = {'p':'b_pawn','r':'b_rook','n':'b_knight','b':'b_bishop','q':'b_queen','k':'b_king',
                                     'P':'w_pawn','R':'w_rook','N':'w_knight','B':'w_bishop','Q':'w_queen','K':'w_king'}
+        
         # Fülle das Board-Array basierend auf der FEN-Darstellung
         for row in board_part.split('/'):
             for char in row:
